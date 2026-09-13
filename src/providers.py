@@ -36,27 +36,55 @@ class MockOfflineProvider(BaseLLMProvider):
 
     def generate_with_tools(self, prompt: str, tools_schema: List[Dict[str, Any]], system_prompt: str = "") -> Dict[str, Any]:
         prompt_lower = prompt.lower()
-        
-        # Mô phỏng nhận diện intent gọi Tool
-        if "sv2026001" in prompt_lower and "đặt lịch" in prompt_lower:
+
+        # Mô phỏng nhận diện intent cho đề tài Medical Appointment & FAQ.
+        if any(word in prompt_lower for word in ["giờ làm việc", "làm việc", "bảo hiểm", "thủ tục", "nội quy", "quy định"]):
             return {
                 "type": "tool_call",
-                "tool_name": "schedule_appointment",
-                "arguments": {"student_id": "SV2026001", "datetime_str": "14:00 15/09/2026", "advisor_name": "PGS.TS Nguyễn Văn A"},
-                "thought": "Người dùng yêu cầu đặt lịch hẹn tư vấn cho sinh viên SV2026001. Tôi sẽ gọi tool schedule_appointment."
+                "tool_name": "get_faq",
+                "arguments": {"question": prompt, "category": "working_hours"},
+                "thought": "Câu hỏi liên quan đến quy định bệnh viện; tôi sẽ tra cứu FAQ."
             }
-        elif "sv2026001" in prompt_lower or "tra cứu" in prompt_lower:
+        elif any(word in prompt_lower for word in ["hủy", "huỷ"]):
             return {
                 "type": "tool_call",
-                "tool_name": "academic_query",
-                "arguments": {"student_id": "SV2026001"},
-                "thought": "Người dùng muốn tra cứu thông tin học vụ của sinh viên SV2026001. Tôi sẽ gọi tool academic_query."
+                "tool_name": "manage_appointment",
+                "arguments": {"action": "cancel_appointment", "booking_id": "MED-0001"},
+                "thought": "Tôi sẽ kiểm tra mã lịch hẹn và thực hiện yêu cầu hủy lịch."
+            }
+        elif "đặt lịch" in prompt_lower:
+            return {
+                "type": "tool_call",
+                "tool_name": "manage_appointment",
+                "arguments": {
+                    "action": "book_appointment",
+                    "patient_name": "Nguyễn Văn Minh",
+                    "phone": "0901234567",
+                    "doctor_id": "BS001",
+                    "date": "2026-09-15",
+                    "time_slot": "09:00"
+                },
+                "thought": "Người dùng muốn đặt lịch; tôi sẽ đặt vào khung giờ mẫu còn trống."
+            }
+        elif any(word in prompt_lower for word in ["lịch trống", "còn lịch", "khung giờ"]):
+            return {
+                "type": "tool_call",
+                "tool_name": "manage_appointment",
+                "arguments": {"action": "check_availability", "doctor_id": "BS001", "date": "2026-09-15"},
+                "thought": "Người dùng cần dữ liệu lịch trống; tôi sẽ kiểm tra lịch của bác sĩ."
+            }
+        elif any(word in prompt_lower for word in ["bác sĩ", "tim mạch", "tiêu hóa", "nhi khoa"]):
+            return {
+                "type": "tool_call",
+                "tool_name": "manage_appointment",
+                "arguments": {"action": "search_doctors", "specialty": "Tim mạch"},
+                "thought": "Người dùng muốn tìm bác sĩ; tôi sẽ tìm theo chuyên khoa Tim mạch."
             }
         else:
             return {
                 "type": "text",
-                "content": f"[Mock Agent Response]: Xin chào! Quy chế học vụ VinUni yêu cầu sinh viên tích lũy tối thiểu 120 tín chỉ và duy trì GPA trên 2.0 để tốt nghiệp.",
-                "thought": "Câu hỏi chung về quy chế học vụ, trả lời trực tiếp không cần gọi Tool."
+                "content": "[Mock Agent Response]: Tôi có thể hỗ trợ tìm bác sĩ, kiểm tra lịch trống, đặt/hủy lịch và giải đáp quy định bệnh viện.",
+                "thought": "Câu hỏi chung, trả lời trực tiếp không cần gọi Tool."
             }
 
 

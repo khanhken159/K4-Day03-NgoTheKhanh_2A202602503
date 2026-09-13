@@ -41,6 +41,29 @@ cp config/test_cases.example.json config/test_cases.json
 python src/app.py --all
 ```
 
+### Demo CLI offline cho đề tài y tế
+
+Để trình diễn nhanh luồng ReAct mà không cần API key, chạy:
+
+```bash
+python demo_cli.py
+```
+
+Demo hiển thị đầy đủ `Thought -> Action -> Observation -> Final Answer`, hỗ trợ
+tìm bác sĩ, kiểm tra lịch trống, đặt/tra cứu/hủy lịch và FAQ. Gõ `reset` để
+khôi phục dữ liệu phiên, hoặc `exit` để thoát.
+
+### Demo web trực quan
+
+Chạy lệnh dưới đây rồi truy cập `http://127.0.0.1:8000` trên trình duyệt:
+
+```bash
+python demo_web.py
+```
+
+Giao diện web có khung chat, các câu hỏi mẫu và Waterfall Trace đầy đủ cho
+từng lượt hỏi. Phiên demo chạy offline, không cần API key hay cài thêm package.
+
 **Kỳ vọng Output màn hình:**
 ```text
 ✅ [MOCK OFFLINE MODE PASS]: Môi trường đã sẵn sàng! 

@@ -1,29 +1,132 @@
 [
   {
     "step": 1,
-    "query": "Chào bạn, bạn có thể giới thiệu quy chế học vụ cơ bản của Đại học VinUni không?",
+    "query": "Bạn có thể hỗ trợ những việc gì?",
     "action_type": "FINAL_ANSWER",
-    "thought": "Câu hỏi chung về quy chế học vụ, trả lời trực tiếp không cần gọi Tool.",
-    "output": "[Mock Agent Response]: Xin chào! Quy chế học vụ VinUni yêu cầu sinh viên tích lũy tối thiểu 120 tín chỉ và duy trì GPA trên 2.0 để tốt nghiệp.",
-    "latency_ms": 2845.93
+    "thought": "Câu hỏi chung, trả lời trực tiếp không cần gọi Tool.",
+    "output": "[Mock Agent Response]: Tôi có thể hỗ trợ tìm bác sĩ, kiểm tra lịch trống, đặt/hủy lịch và giải đáp quy định bệnh viện.",
+    "latency_ms": 0.08
   },
   {
     "step": 1,
-    "query": "Hãy tra cứu thông tin học vụ của sinh viên SV2026001.",
+    "query": "Bệnh viện làm việc vào khung giờ nào?",
     "action_type": "TOOL_EXECUTION",
-    "tool_name": "academic_query",
+    "tool_name": "get_faq",
     "arguments": {
-      "student_id": "SV2026001"
+      "question": "Bệnh viện làm việc vào khung giờ nào?",
+      "category": "working_hours"
     },
-    "observation": {},
-    "latency_ms": 799.12
+    "observation": {
+      "status": "SUCCESS",
+      "category": "working_hours",
+      "answer": "Bệnh viện làm việc từ 07:30 đến 17:00, Thứ Hai đến Thứ Bảy."
+    },
+    "latency_ms": 0.06
   },
   {
     "step": 2,
-    "query": "Hãy tra cứu thông tin học vụ của sinh viên SV2026001.",
+    "query": "Bệnh viện làm việc vào khung giờ nào?",
     "action_type": "FINAL_ANSWER",
     "thought": "Tổng hợp kết quả từ MCP Server thành công.",
-    "output": "Chưa thể trả lời chi tiết do chưa nhận được dữ liệu từ MCP Server (hãy hoàn thành TODO 2.1).",
+    "output": "Đã hoàn tất xử lý qua MCP Server: {\"status\": \"SUCCESS\", \"category\": \"working_hours\", \"answer\": \"Bệnh viện làm việc từ 07:30 đến 17:00, Thứ Hai đến Thứ Bảy.\"}",
+    "latency_ms": 10.0
+  },
+  {
+    "step": 1,
+    "query": "Tôi muốn tìm bác sĩ Tim mạch.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "manage_appointment",
+    "arguments": {
+      "action": "search_doctors",
+      "specialty": "Tim mạch"
+    },
+    "observation": {
+      "status": "SUCCESS",
+      "doctors": [
+        {
+          "doctor_id": "BS001",
+          "name": "BS. Nguyễn Minh An",
+          "specialty": "Tim mạch",
+          "location": "Cơ sở Quận 1"
+        }
+      ]
+    },
+    "latency_ms": 0.06
+  },
+  {
+    "step": 2,
+    "query": "Tôi muốn tìm bác sĩ Tim mạch.",
+    "action_type": "FINAL_ANSWER",
+    "thought": "Tổng hợp kết quả từ MCP Server thành công.",
+    "output": "Đã hoàn tất xử lý qua MCP Server: {\"status\": \"SUCCESS\", \"doctors\": [{\"doctor_id\": \"BS001\", \"name\": \"BS. Nguyễn Minh An\", \"specialty\": \"Tim mạch\", \"location\": \"Cơ sở Quận 1\"}]}",
+    "latency_ms": 10.0
+  },
+  {
+    "step": 1,
+    "query": "Hãy đặt lịch khám Tim mạch cho tôi vào ngày 2026-09-15 lúc 09:00.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "manage_appointment",
+    "arguments": {
+      "action": "book_appointment",
+      "patient_name": "Nguyễn Văn Minh",
+      "phone": "0901234567",
+      "doctor_id": "BS001",
+      "date": "2026-09-15",
+      "time_slot": "09:00"
+    },
+    "observation": {
+      "status": "SUCCESS",
+      "appointment": {
+        "booking_id": "MED-0001",
+        "patient_name": "Nguyễn Văn Minh",
+        "phone": "0901234567",
+        "doctor_id": "BS001",
+        "date": "2026-09-15",
+        "time_slot": "09:00",
+        "status": "BOOKED"
+      },
+      "message": "Đặt lịch khám thành công."
+    },
+    "latency_ms": 0.07
+  },
+  {
+    "step": 2,
+    "query": "Hãy đặt lịch khám Tim mạch cho tôi vào ngày 2026-09-15 lúc 09:00.",
+    "action_type": "FINAL_ANSWER",
+    "thought": "Tổng hợp kết quả từ MCP Server thành công.",
+    "output": "Đặt lịch khám thành công.",
+    "latency_ms": 10.0
+  },
+  {
+    "step": 1,
+    "query": "Hãy hủy lịch khám có mã MED-0001.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "manage_appointment",
+    "arguments": {
+      "action": "cancel_appointment",
+      "booking_id": "MED-0001"
+    },
+    "observation": {
+      "status": "SUCCESS",
+      "appointment": {
+        "booking_id": "MED-0001",
+        "patient_name": "Nguyễn Văn Minh",
+        "phone": "0901234567",
+        "doctor_id": "BS001",
+        "date": "2026-09-15",
+        "time_slot": "09:00",
+        "status": "CANCELLED"
+      },
+      "message": "Đã hủy lịch khám thành công."
+    },
+    "latency_ms": 0.07
+  },
+  {
+    "step": 2,
+    "query": "Hãy hủy lịch khám có mã MED-0001.",
+    "action_type": "FINAL_ANSWER",
+    "thought": "Tổng hợp kết quả từ MCP Server thành công.",
+    "output": "Đã hủy lịch khám thành công.",
     "latency_ms": 10.0
   }
 ]

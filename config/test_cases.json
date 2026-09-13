@@ -1,0 +1,37 @@
+[
+  {
+    "id": "TC01",
+    "type": "direct_query",
+    "question": "Bạn có thể hỗ trợ những việc gì?",
+    "expected_behavior": "Agent trả lời trực tiếp về phạm vi hỗ trợ, không gọi tool.",
+    "complexity": "Low"
+  },
+  {
+    "id": "TC02",
+    "type": "faq_query",
+    "question": "Bệnh viện làm việc vào khung giờ nào?",
+    "expected_behavior": "Agent gọi get_faq để tra cứu giờ làm việc của bệnh viện.",
+    "complexity": "Low"
+  },
+  {
+    "id": "TC03",
+    "type": "doctor_search",
+    "question": "Tôi muốn tìm bác sĩ Tim mạch.",
+    "expected_behavior": "Agent gọi manage_appointment với action search_doctors để tìm bác sĩ phù hợp.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC04",
+    "type": "appointment_booking",
+    "question": "Hãy đặt lịch khám Tim mạch cho tôi vào ngày 2026-09-15 lúc 09:00.",
+    "expected_behavior": "Agent gọi manage_appointment với action book_appointment và nhận mã lịch hẹn.",
+    "complexity": "High"
+  },
+  {
+    "id": "TC05",
+    "type": "appointment_cancellation",
+    "question": "Hãy hủy lịch khám có mã MED-0001.",
+    "expected_behavior": "Agent kiểm tra lịch hẹn MED-0001 và hủy lịch nếu lịch đã được đặt.",
+    "complexity": "Medium"
+  }
+]
